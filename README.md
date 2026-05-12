@@ -67,6 +67,7 @@ Useful documentation:
 - [Project brief](docs/project-brief.md)
 - [Design decisions](docs/design-decisions.md)
 - [API testing notes](docs/api-testing.md)
+- [Security scanning](docs/security-scanning.md)
 
 ## Run the Sample API
 
