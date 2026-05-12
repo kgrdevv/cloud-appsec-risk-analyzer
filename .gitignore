@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Scanner and report outputs
+reports/
+scanner-results/
+*.sarif
+
+# Local runtime data
+*.db
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
