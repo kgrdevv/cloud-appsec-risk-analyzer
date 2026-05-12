@@ -69,6 +69,7 @@ Useful documentation:
 - [API testing notes](docs/api-testing.md)
 - [Security scanning](docs/security-scanning.md)
 - [Finding normalization](docs/finding-normalization.md)
+- [Risk scoring](docs/risk-scoring.md)
 
 ## Run the Sample API
 
