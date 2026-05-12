@@ -16,6 +16,31 @@ semgrep-rules/python/sql-injection.yml
 
 The first rule detects SQL queries built with dynamic string formatting before execution.
 
+## GitHub Actions
+
+The repository includes a GitHub Actions workflow:
+
+```text
+.github/workflows/security-scan.yml
+```
+
+The workflow runs on:
+
+- Pushes to `main`.
+- Pull requests targeting `main`.
+- Manual runs from the GitHub Actions tab.
+
+The Semgrep job runs in the official Semgrep container image, so local Windows installation is not required for CI scanning.
+
+Current behavior:
+
+- Uses the local rules from `semgrep-rules/`.
+- Scans the `app/` directory.
+- Writes JSON output to `scanner-results/semgrep.json`.
+- Uploads the JSON file as a workflow artifact named `semgrep-results`.
+
+The workflow is currently treated as a monitoring scan. The sample API intentionally contains a finding, so the first CI version focuses on producing machine-readable output instead of blocking every commit.
+
 ## Expected Finding
 
 The rule is expected to flag the admin search endpoint in:

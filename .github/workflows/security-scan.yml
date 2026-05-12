@@ -1,0 +1,43 @@
+name: Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  semgrep:
+    name: Semgrep SAST
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep with local rules
+        run: |
+          mkdir -p scanner-results
+          docker run --rm \
+            -v "$PWD:/src" \
+            -w /src \
+            semgrep/semgrep:latest \
+            semgrep scan \
+            --config semgrep-rules \
+            --json \
+            --output scanner-results/semgrep.json \
+            app
+
+      - name: Upload Semgrep JSON results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: semgrep-results
+          path: scanner-results/semgrep.json
+          if-no-files-found: error
