@@ -68,6 +68,7 @@ Useful documentation:
 - [Design decisions](docs/design-decisions.md)
 - [API testing notes](docs/api-testing.md)
 - [Security scanning](docs/security-scanning.md)
+- [Finding normalization](docs/finding-normalization.md)
 
 ## Run the Sample API
 
