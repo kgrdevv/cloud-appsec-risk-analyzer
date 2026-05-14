@@ -73,3 +73,4 @@ Useful documentation:
 - [Reporting](docs/reporting.md)
 - [IaC exposure model](docs/iac-exposure-model.md)
 - [Secret scanning](docs/secret-scanning.md)
+- [Dependency scanning](docs/dependency-scanning.md)

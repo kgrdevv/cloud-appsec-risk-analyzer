@@ -44,6 +44,14 @@ def format_list(values: Any) -> str:
     return ", ".join(markdown_escape(value) for value in values)
 
 
+def format_location(finding: dict[str, Any]) -> str:
+    file_path = finding.get("file", "unknown")
+    line = finding.get("line", 0)
+    if isinstance(line, int) and line > 0:
+        return f"{file_path}:{line}"
+    return str(file_path)
+
+
 def build_summary(findings: list[dict[str, Any]]) -> list[str]:
     priority_counts = Counter(str(finding.get("priority", "unknown")).lower() for finding in findings)
     scanner_counts = Counter(str(finding.get("scanner", "unknown")).lower() for finding in findings)
@@ -85,7 +93,7 @@ def build_findings_table(findings: list[dict[str, Any]]) -> list[str]:
         return lines
 
     for finding in findings:
-        location = f"{finding.get('file', 'unknown')}:{finding.get('line', 0)}"
+        location = format_location(finding)
         lines.append(
             "| {priority} | {score} | {scanner} | {rule} | {location} |".format(
                 priority=markdown_escape(finding.get("priority", "unknown")),
@@ -108,7 +116,7 @@ def build_finding_details(findings: list[dict[str, Any]]) -> list[str]:
         return lines
 
     for index, finding in enumerate(findings, start=1):
-        location = f"{finding.get('file', 'unknown')}:{finding.get('line', 0)}"
+        location = format_location(finding)
         lines.extend(
             [
                 f"### {index}. {markdown_escape(finding.get('title', 'Security finding'))}",
@@ -151,6 +159,9 @@ def build_recommendations(findings: list[dict[str, Any]]) -> list[str]:
     if "secret" in categories:
         actions.append("Confirm whether detected secret material is a controlled fixture or a real credential.")
         actions.append("Remove real credentials from version control and rotate any exposed secret values.")
+
+    if "sca" in categories:
+        actions.append("Review vulnerable dependencies and upgrade to fixed versions where available.")
 
     actions.append("Feed additional scanner outputs into the analyzer to improve prioritization confidence.")
 

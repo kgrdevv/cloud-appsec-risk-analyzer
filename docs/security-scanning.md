@@ -2,7 +2,7 @@
 
 This document tracks the security scanning approach used by the project.
 
-The first scanners added to the MVP are Semgrep, Checkov, and Gitleaks. The goal is to start with a small number of understandable signals before adding more tools.
+The first scanners added to the MVP are Semgrep, Checkov, Gitleaks, and Trivy. The goal is to start with a small number of understandable signals before adding more tools.
 
 ## Semgrep
 
@@ -42,6 +42,14 @@ Current fixture:
 test-fixtures/secrets/leaky-config.txt
 ```
 
+## Trivy
+
+Trivy is used for dependency vulnerability scanning. In this project, it runs in filesystem mode and inspects dependency manifests such as:
+
+```text
+requirements.txt
+```
+
 ## GitHub Actions
 
 The repository includes a GitHub Actions workflow:
@@ -64,9 +72,11 @@ Current behavior:
 - Scans the `app/` directory.
 - Runs Checkov against `infra/terraform/`.
 - Runs Gitleaks against the repository contents.
+- Runs Trivy against the repository filesystem.
 - Writes JSON output to `scanner-results/semgrep.json`.
 - Writes JSON output to `scanner-results/checkov.json`.
 - Writes JSON output to `scanner-results/gitleaks.json`.
+- Writes JSON output to `scanner-results/trivy.json`.
 - Normalizes findings.
 - Calculates risk scores.
 - Generates a Markdown risk report.
@@ -104,6 +114,8 @@ Gitleaks is expected to flag the controlled demo secret fixture in:
 ```text
 test-fixtures/secrets/leaky-config.txt
 ```
+
+Trivy findings depend on the vulnerability database and current dependency versions. If no vulnerable dependency is present, Trivy may produce zero findings while still generating a valid JSON artifact.
 
 ## Run Locally
 

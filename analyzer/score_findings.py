@@ -77,6 +77,12 @@ def exposure_bonus(finding: dict[str, Any]) -> tuple[int, list[str]]:
             bonus -= 25
             factors.append("controlled_test_fixture")
 
+    if category == "sca":
+        factors.append("dependency_vulnerability")
+        if file_path in {"requirements.txt", "poetry.lock", "Pipfile.lock"}:
+            bonus += 5
+            factors.append("application_dependency_manifest")
+
     return bonus, factors
 
 

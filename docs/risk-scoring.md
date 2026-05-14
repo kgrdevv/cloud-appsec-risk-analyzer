@@ -55,6 +55,7 @@ The first scoring version adds small bonuses for:
 - broad permissions language in IaC findings.
 - credential material in secret scanning findings;
 - controlled test fixture context lowers the score for intentional demo secrets.
+- dependency vulnerability findings from SCA scanners.
 
 These are deliberately conservative. Future versions should use richer context, such as whether a vulnerable route is public, admin-only, internet-exposed, connected to sensitive data, or tied to risky cloud/IaC configuration.
 

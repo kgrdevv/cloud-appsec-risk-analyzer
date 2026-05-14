@@ -57,6 +57,18 @@ jobs:
             --redact \
             --exit-code 0
 
+      - name: Run Trivy filesystem dependency scan
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" \
+            -v "$PWD/.trivy-cache:/root/.cache/" \
+            aquasec/trivy:latest \
+            fs /src \
+            --scanners vuln \
+            --format json \
+            --output /src/scanner-results/trivy.json \
+            --exit-code 0
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -71,10 +83,13 @@ jobs:
       - name: Normalize Gitleaks findings
         run: python -m analyzer.normalize_gitleaks --output scanner-results/gitleaks-normalized-findings.json
 
+      - name: Normalize Trivy findings
+        run: python -m analyzer.normalize_trivy --output scanner-results/trivy-normalized-findings.json
+
       - name: Merge normalized findings
         run: |
           python -m analyzer.merge_findings \
-            --input scanner-results/semgrep-normalized-findings.json scanner-results/checkov-normalized-findings.json scanner-results/gitleaks-normalized-findings.json \
+            --input scanner-results/semgrep-normalized-findings.json scanner-results/checkov-normalized-findings.json scanner-results/gitleaks-normalized-findings.json scanner-results/trivy-normalized-findings.json \
             --output scanner-results/normalized-findings.json
 
       - name: Score normalized findings
