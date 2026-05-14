@@ -44,10 +44,15 @@ def exposure_bonus(finding: dict[str, Any]) -> tuple[int, list[str]]:
 
     file_path = str(finding.get("file", ""))
     title = str(finding.get("title", "")).lower()
+    category = str(finding.get("category", "")).lower()
 
     if file_path.startswith("app/"):
         bonus += 5
         factors.append("application_code")
+
+    if file_path.startswith("infra/terraform/"):
+        bonus += 5
+        factors.append("iac_exposure_model")
 
     if "sql" in title:
         bonus += 5
@@ -56,6 +61,14 @@ def exposure_bonus(finding: dict[str, Any]) -> tuple[int, list[str]]:
     if finding.get("cwe") and "CWE-89" in finding["cwe"]:
         bonus += 5
         factors.append("sql_injection_cwe")
+
+    if category == "iac":
+        if "0.0.0.0/0" in title or "public" in title:
+            bonus += 10
+            factors.append("public_exposure")
+        if "wildcard" in title or "permissions" in title or "privilege" in title:
+            bonus += 10
+            factors.append("broad_permissions")
 
     return bonus, factors
 

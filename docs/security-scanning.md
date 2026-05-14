@@ -2,7 +2,7 @@
 
 This document tracks the security scanning approach used by the project.
 
-The first scanner added to the MVP is Semgrep. The goal is to start with one understandable signal before adding more tools.
+The first scanners added to the MVP are Semgrep and Checkov. The goal is to start with a small number of understandable signals before adding more tools.
 
 ## Semgrep
 
@@ -15,6 +15,16 @@ semgrep-rules/python/sql-injection.yml
 ```
 
 The first rule detects SQL queries built with dynamic string formatting before execution.
+
+## Checkov
+
+Checkov is used for infrastructure-as-code scanning. In this project, it checks the Terraform exposure model in:
+
+```text
+infra/terraform/
+```
+
+The Terraform sample intentionally includes risky cloud-style patterns, such as public ingress and broad IAM permissions. These are scan targets only and should not be deployed as written.
 
 ## GitHub Actions
 
@@ -30,13 +40,15 @@ The workflow runs on:
 - Pull requests targeting `main`.
 - Manual runs from the GitHub Actions tab.
 
-The Semgrep job runs in the official Semgrep container image, so local Windows installation is not required for CI scanning.
+Semgrep and Checkov run in container images in CI, so local Windows installation is not required for GitHub Actions scanning.
 
 Current behavior:
 
 - Uses the local rules from `semgrep-rules/`.
 - Scans the `app/` directory.
+- Runs Checkov against `infra/terraform/`.
 - Writes JSON output to `scanner-results/semgrep.json`.
+- Writes JSON output to `scanner-results/checkov.json`.
 - Normalizes findings.
 - Calculates risk scores.
 - Generates a Markdown risk report.
@@ -44,9 +56,9 @@ Current behavior:
 
 The workflow is currently treated as a monitoring scan. The sample API intentionally contains a finding, so the first CI version focuses on producing machine-readable output instead of blocking every commit.
 
-## Expected Finding
+## Expected Findings
 
-The rule is expected to flag the admin search endpoint in:
+The Semgrep rule is expected to flag the admin search endpoint in:
 
 ```text
 app/main.py
@@ -60,6 +72,14 @@ The relevant risk is not just "SQL injection exists." The more useful interpreta
 - The endpoint uses only a weak demo API key in the MVP.
 
 This is the type of context the future analyzer should use when assigning priority.
+
+Checkov is expected to flag one or more intentionally risky Terraform patterns in:
+
+```text
+infra/terraform/
+```
+
+Those findings provide cloud exposure context for later correlation.
 
 ## Run Locally
 

@@ -137,15 +137,24 @@ def build_recommendations(findings: list[dict[str, Any]]) -> list[str]:
     if not findings:
         return ["## Recommended Actions", "", "No remediation actions are required.", ""]
 
-    return [
-        "## Recommended Actions",
-        "",
-        "1. Review high-priority findings first and confirm whether the affected route is reachable.",
-        "2. Replace dynamic SQL construction with parameterized queries.",
-        "3. Replace demo authentication with a real authentication and authorization model before production use.",
-        "4. Feed additional scanner outputs into the analyzer to improve prioritization confidence.",
-        "",
-    ]
+    categories = {str(finding.get("category", "unknown")).lower() for finding in findings}
+    actions = ["Review high-priority findings first and confirm whether the affected asset is reachable."]
+
+    if "sast" in categories:
+        actions.append("Replace dynamic SQL construction with parameterized queries.")
+        actions.append("Replace demo authentication with a real authentication and authorization model before production use.")
+
+    if "iac" in categories:
+        actions.append("Restrict public network exposure in Terraform unless a public route is explicitly required.")
+        actions.append("Replace wildcard IAM permissions with least-privilege actions and resources.")
+
+    actions.append("Feed additional scanner outputs into the analyzer to improve prioritization confidence.")
+
+    lines = ["## Recommended Actions", ""]
+    for index, action in enumerate(actions, start=1):
+        lines.append(f"{index}. {action}")
+    lines.append("")
+    return lines
 
 
 def build_report(findings: list[dict[str, Any]]) -> str:
@@ -199,4 +208,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -53,4 +53,4 @@ Generated report with 1 finding(s) at reports/security-report.md
 
 ## Current Limitation
 
-The report currently reflects only findings that have already been normalized and scored. It does not run scanners by itself. A future pipeline step should chain scanning, normalization, scoring, and reporting.
+The report currently reflects only findings that have already been normalized and scored. It does not run scanners by itself. GitHub Actions chains scanning, normalization, scoring, and reporting.

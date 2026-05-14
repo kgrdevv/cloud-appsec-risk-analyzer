@@ -48,8 +48,11 @@ The score is capped between `0` and `100`.
 The first scoring version adds small bonuses for:
 
 - findings in application code;
+- findings in the Terraform exposure model;
 - injection-related finding titles;
 - SQL injection CWE mapping.
+- public exposure language in IaC findings;
+- broad permissions language in IaC findings.
 
 These are deliberately conservative. Future versions should use richer context, such as whether a vulnerable route is public, admin-only, internet-exposed, connected to sensitive data, or tied to risky cloud/IaC configuration.
 

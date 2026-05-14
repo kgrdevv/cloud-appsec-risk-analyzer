@@ -13,8 +13,8 @@ permissions:
   contents: read
 
 jobs:
-  semgrep:
-    name: Semgrep SAST
+  security_scan:
+    name: Security Scan
     runs-on: ubuntu-latest
 
     steps:
@@ -34,13 +34,33 @@ jobs:
             --output scanner-results/semgrep.json \
             app
 
+      - name: Run Checkov against Terraform
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" \
+            -w /src \
+            bridgecrew/checkov:latest \
+            --directory infra/terraform \
+            --output json \
+            --soft-fail \
+            > scanner-results/checkov.json
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Normalize Semgrep findings
-        run: python -m analyzer.normalize_semgrep
+        run: python -m analyzer.normalize_semgrep --output scanner-results/semgrep-normalized-findings.json
+
+      - name: Normalize Checkov findings
+        run: python -m analyzer.normalize_checkov --output scanner-results/checkov-normalized-findings.json
+
+      - name: Merge normalized findings
+        run: |
+          python -m analyzer.merge_findings \
+            --input scanner-results/semgrep-normalized-findings.json scanner-results/checkov-normalized-findings.json \
+            --output scanner-results/normalized-findings.json
 
       - name: Score normalized findings
         run: python -m analyzer.score_findings

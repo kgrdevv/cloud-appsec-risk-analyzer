@@ -54,10 +54,10 @@ This repository is in the early MVP stage. The project brief and sample API appl
 
 ```text
 app/                Sample FastAPI application used as the scan target
-analyzer/           Future scanner output parser and risk scoring engine
+analyzer/           Scanner normalization, risk scoring, and report generation
 docs/               Project brief and supporting documentation
-infra/terraform/    Future intentionally risky IaC examples
-pipeline/           Future local pipeline helper scripts
+infra/terraform/    Intentionally risky Terraform exposure model
+pipeline/           Local pipeline helper scripts
 Dockerfile          Container definition for the sample API
 requirements.txt    Python dependencies
 ```
@@ -71,3 +71,4 @@ Useful documentation:
 - [Finding normalization](docs/finding-normalization.md)
 - [Risk scoring](docs/risk-scoring.md)
 - [Reporting](docs/reporting.md)
+- [IaC exposure model](docs/iac-exposure-model.md)
