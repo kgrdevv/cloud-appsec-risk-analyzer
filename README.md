@@ -103,6 +103,10 @@ scanner-results/correlated-risks.json
 reports/security-report.md
 ```
 
+For a quick view of the final output, see the curated sample report:
+
+- [Example security report](examples/security-report.md)
+
 ## Intentional Test Data
 
 This repository contains intentionally vulnerable or risky examples so the pipeline has stable findings to analyze.
