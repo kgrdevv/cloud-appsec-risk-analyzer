@@ -9,7 +9,10 @@ from analyzer.schemas import NormalizedFinding
 def normalize_file_path(value: Any) -> str:
     if not isinstance(value, str):
         return "unknown"
-    return value.lstrip("/")
+    path = value.lstrip("/")
+    if path.startswith("src/"):
+        return path.removeprefix("src/")
+    return path
 
 
 def normalize_line(value: Any) -> int:
@@ -91,4 +94,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
