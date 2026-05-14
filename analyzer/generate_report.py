@@ -14,6 +14,13 @@ PRIORITY_ORDER = {
     "unknown": 4,
 }
 
+NORMALIZED_FINDING_FILES = {
+    "semgrep": "semgrep-normalized-findings.json",
+    "checkov": "checkov-normalized-findings.json",
+    "gitleaks": "gitleaks-normalized-findings.json",
+    "trivy": "trivy-normalized-findings.json",
+}
+
 
 def markdown_escape(value: Any) -> str:
     text = str(value) if value is not None else ""
@@ -29,6 +36,18 @@ def load_findings(input_path: Path) -> list[dict[str, Any]]:
         raise ValueError("Scored findings JSON does not contain a valid findings list")
 
     return [finding for finding in findings if isinstance(finding, dict)]
+
+
+def load_scanner_execution(scanner_results_dir: Path) -> dict[str, int]:
+    execution = {}
+
+    for scanner, file_name in NORMALIZED_FINDING_FILES.items():
+        input_path = scanner_results_dir / file_name
+        if not input_path.exists():
+            continue
+        execution[scanner] = len(load_findings(input_path))
+
+    return execution
 
 
 def priority_sort_key(finding: dict[str, Any]) -> tuple[int, int]:
@@ -52,9 +71,9 @@ def format_location(finding: dict[str, Any]) -> str:
     return str(file_path)
 
 
-def build_summary(findings: list[dict[str, Any]]) -> list[str]:
+def build_summary(findings: list[dict[str, Any]], scanner_execution: dict[str, int]) -> list[str]:
     priority_counts = Counter(str(finding.get("priority", "unknown")).lower() for finding in findings)
-    scanner_counts = Counter(str(finding.get("scanner", "unknown")).lower() for finding in findings)
+    scanner_counts = scanner_execution or Counter(str(finding.get("scanner", "unknown")).lower() for finding in findings)
 
     lines = [
         "## Executive Summary",
@@ -65,15 +84,15 @@ def build_summary(findings: list[dict[str, Any]]) -> list[str]:
         f"- Medium: `{priority_counts.get('medium', 0)}`",
         f"- Low: `{priority_counts.get('low', 0)}`",
         "",
-        "Scanner coverage:",
+        "Scanner execution:",
         "",
     ]
 
     if scanner_counts:
         for scanner, count in sorted(scanner_counts.items()):
-            lines.append(f"- `{scanner}`: `{count}` finding(s)")
+            lines.append(f"- `{scanner}`: completed, `{count}` finding(s)")
     else:
-        lines.append("- No scanner findings were provided.")
+        lines.append("- No scanner execution data was provided.")
 
     lines.append("")
     return lines
@@ -172,7 +191,7 @@ def build_recommendations(findings: list[dict[str, Any]]) -> list[str]:
     return lines
 
 
-def build_report(findings: list[dict[str, Any]]) -> str:
+def build_report(findings: list[dict[str, Any]], scanner_execution: dict[str, int]) -> str:
     sorted_findings = sorted(findings, key=priority_sort_key)
     generated_at = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
 
@@ -185,7 +204,7 @@ def build_report(findings: list[dict[str, Any]]) -> str:
         "",
     ]
 
-    lines.extend(build_summary(sorted_findings))
+    lines.extend(build_summary(sorted_findings, scanner_execution))
     lines.extend(build_findings_table(sorted_findings))
     lines.extend(build_finding_details(sorted_findings))
     lines.extend(build_recommendations(sorted_findings))
@@ -210,13 +229,19 @@ def parse_args() -> argparse.Namespace:
         default="reports/security-report.md",
         help="Path where the Markdown report should be written.",
     )
+    parser.add_argument(
+        "--scanner-results-dir",
+        default="scanner-results",
+        help="Directory containing normalized scanner finding files.",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
     findings = load_findings(Path(args.input))
-    report = build_report(findings)
+    scanner_execution = load_scanner_execution(Path(args.scanner_results_dir))
+    report = build_report(findings, scanner_execution)
     write_report(Path(args.output), report)
     print(f"Generated report with {len(findings)} finding(s) at {args.output}")
 

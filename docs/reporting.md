@@ -32,7 +32,7 @@ The first report version includes:
 
 - executive summary;
 - finding counts by priority;
-- scanner coverage;
+- scanner execution summary, including scanners with zero findings;
 - findings overview table;
 - detailed finding breakdown;
 - recommended actions.
