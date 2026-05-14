@@ -36,7 +36,7 @@ def normalize_result(result: dict[str, Any]) -> NormalizedFinding:
         title=str(result.get("check_name", "Checkov IaC finding")),
         severity=normalize_severity(result.get("severity")),
         category="iac",
-        file=normalize_file_path(result.get("file_path")),
+        file=normalize_file_path(result.get("repo_file_path") or result.get("file_path")),
         line=line,
         end_line=end_line,
         cwe=[],
@@ -110,4 +110,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
