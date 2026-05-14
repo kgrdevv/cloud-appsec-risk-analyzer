@@ -34,22 +34,22 @@ Trade-off: the MVP will not prove runtime cloud deployment. That can be added la
 
 ## 4. Prioritize Risk Correlation Over Tool Count
 
-Decision: use a small scanner set first instead of adding every possible security tool.
+Decision: use a small scanner set instead of adding every possible security tool.
 
-Reasoning: the project should not be a checklist of scanners. The more interesting part is how findings are normalized and prioritized. A small number of well-understood tools is enough for the first version.
+Reasoning: the project should not be a checklist of scanners. The more interesting part is how findings are normalized, scored, correlated, and explained. A small number of well-understood tools is enough to show the workflow clearly.
 
-Initial tools:
+Current tools:
 
 - Semgrep for SAST.
 - Gitleaks for secret scanning.
-- Trivy for dependency and container scanning.
+- Trivy for filesystem dependency scanning.
 - Checkov for infrastructure-as-code scanning.
 
-Trade-off: some security domains will be represented lightly in the MVP.
+Trade-off: some security domains are represented lightly. For example, Trivy currently scans dependency manifests in filesystem mode rather than a built container image.
 
 ## 5. Use Python for Both the API and Analyzer
 
-Decision: use Python for the sample API and the future risk analyzer.
+Decision: use Python for the sample API and the risk analyzer.
 
 Reasoning: Python is practical for API development, JSON parsing, report generation, and security automation. Using one language keeps the MVP easier to maintain and explain.
 
@@ -62,4 +62,3 @@ Decision: write documentation alongside the code.
 Reasoning: this is a portfolio project. The repository should show not only what was built, but also why certain choices were made. Clear documentation helps reviewers understand the AppSec reasoning behind the implementation.
 
 Trade-off: documentation takes time, but it makes the project easier to review and discuss.
-

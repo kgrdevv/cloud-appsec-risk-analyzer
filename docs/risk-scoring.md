@@ -1,6 +1,6 @@
 # Risk Scoring
 
-The first risk scoring version converts normalized findings into scored findings.
+The risk scoring step converts normalized findings into scored findings.
 
 This is intentionally simple. The goal is not to pretend that a small formula can replace real risk analysis. The goal is to create a transparent baseline that can be improved as more scanner context is added.
 
@@ -45,16 +45,16 @@ The score is capped between `0` and `100`.
 
 ## Current Context Bonuses
 
-The first scoring version adds small bonuses for:
+The current scoring version adds small bonuses for:
 
 - findings in application code;
 - findings in the Terraform exposure model;
 - injection-related finding titles;
-- SQL injection CWE mapping.
+- SQL injection CWE mapping;
 - public exposure language in IaC findings;
-- broad permissions language in IaC findings.
+- broad permissions language in IaC findings;
 - credential material in secret scanning findings;
-- controlled test fixture context lowers the score for intentional demo secrets.
+- controlled test fixture context lowers the score for intentional demo secrets;
 - dependency vulnerability findings from SCA scanners.
 
 These are deliberately conservative. Future versions should use richer context, such as whether a vulnerable route is public, admin-only, internet-exposed, connected to sensitive data, or tied to risky cloud/IaC configuration.
@@ -67,13 +67,13 @@ From the repository root:
 .\.venv\Scripts\python.exe -m analyzer.score_findings
 ```
 
-Expected output for the current Semgrep finding:
+Expected output:
 
 ```text
-Scored 1 finding(s) to scanner-results/scored-findings.json
+Scored findings are written to scanner-results/scored-findings.json
 ```
 
-The current Semgrep SQL injection finding scores as `90/high`. It is intentionally not marked `critical` yet because the MVP has not added cross-tool exposure correlation.
+The exact finding count depends on current scanner output and vulnerability database results.
 
 ## Current Limitation
 

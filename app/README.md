@@ -18,7 +18,7 @@ In a real DevSecOps workflow, scanners need something concrete to inspect. This 
 - SAST scanning with Semgrep.
 - Dependency scanning with Trivy.
 - Secret scanning with Gitleaks.
-- Container scanning after the API is packaged with Docker.
+- Container packaging through the project Dockerfile.
 
 ## Intentional Weaknesses
 
@@ -28,7 +28,7 @@ This application contains controlled weaknesses for learning and testing:
 - An intentionally unsafe SQL query in the admin search endpoint.
 - Simple authentication logic that is not production-grade.
 
-These examples are intentionally included so the security pipeline can detect, normalize, and prioritize findings later in the project.
+These examples are intentionally included so the security pipeline can detect, normalize, score, correlate, and report findings.
 
 ## Local Run
 
@@ -52,4 +52,3 @@ FastAPI also provides interactive documentation at:
 ```text
 http://127.0.0.1:8000/docs
 ```
-

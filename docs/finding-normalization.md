@@ -2,7 +2,7 @@
 
 Security scanners produce different output formats. The analyzer needs a common schema before it can compare, correlate, or score findings from multiple tools.
 
-The first normalization steps support Semgrep, Checkov, Gitleaks, and Trivy JSON output.
+The current normalization steps support Semgrep, Checkov, Gitleaks, and Trivy JSON output.
 
 ## Input
 
@@ -87,4 +87,4 @@ Merged findings are written to scanner-results/normalized-findings.json
 
 ## Why This Matters
 
-Raw scanner output is useful, but each tool speaks its own format. Normalization creates a stable internal representation that future risk scoring can use regardless of whether the finding came from Semgrep, Gitleaks, Trivy, Checkov, or another scanner.
+Raw scanner output is useful, but each tool speaks its own format. Normalization creates a stable internal representation that scoring, correlation, and reporting can use regardless of whether the finding came from Semgrep, Gitleaks, Trivy, Checkov, or another scanner.

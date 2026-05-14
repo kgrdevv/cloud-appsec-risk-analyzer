@@ -10,25 +10,26 @@ Cloud AppSec Risk Analyzer demonstrates how AppSec findings, cloud exposure cont
 
 ## Problem Statement
 
-Security tools often generate large numbers of findings without explaining which issues are most important in a real environment. A vulnerable dependency, exposed secret, risky container image, or permissive IaC rule may be important on its own, but the actual risk becomes clearer when findings are correlated with exposure and workload context.
+Security tools often generate large numbers of findings without explaining which issues are most important in a real environment. A vulnerable dependency, exposed secret, insecure code path, or permissive IaC rule may be important on its own, but the actual risk becomes clearer when findings are correlated with exposure and workload context.
 
 This project models that workflow in a small but complete portfolio system.
 
 ## Target Scenario
 
-A sample API application is built and scanned in a CI/CD pipeline. The pipeline checks the application code, dependencies, secrets, container image, and Terraform configuration. Scanner outputs are normalized into a common format. A risk analyzer then correlates findings and generates a report that explains which risks should be prioritized first.
+A sample API application and Terraform exposure model are scanned in a CI/CD pipeline. The pipeline checks application code, dependencies, secrets, and infrastructure-as-code. Scanner outputs are normalized into a common format, scored, correlated into risk scenarios, and published as a Markdown report.
 
-## MVP Goals
+## Implemented MVP
 
-- Build a small sample API application.
-- Add intentionally insecure examples for controlled testing.
-- Containerize the application.
-- Add Terraform files with intentionally risky cloud-style configuration.
-- Run security scanners in a repeatable pipeline.
-- Normalize scanner results into one JSON schema.
-- Calculate basic risk scores.
-- Generate a readable security report.
-- Document how the project maps to real AppSec and DevSecOps practices.
+- Small FastAPI sample application.
+- Dockerfile for local/containerized API packaging.
+- Intentionally insecure examples for controlled testing.
+- Terraform files with intentionally risky cloud-style configuration.
+- GitHub Actions workflow that runs Semgrep, Checkov, Gitleaks, and Trivy.
+- Scanner-specific normalizers plus a merged finding schema.
+- Risk scoring for normalized findings.
+- Rule-based correlation into risk scenarios.
+- Markdown security report uploaded as a workflow artifact.
+- Supporting documentation for scanning, scoring, correlation, and reporting.
 
 ## Out of Scope for MVP
 
@@ -39,7 +40,7 @@ A sample API application is built and scanned in a CI/CD pipeline. The pipeline 
 - Multi-cloud support.
 - Enterprise ticketing integration.
 
-## Tools Planned
+## Tools Used
 
 - Python and FastAPI for the sample API and analyzer.
 - Docker for container packaging.
@@ -47,7 +48,7 @@ A sample API application is built and scanned in a CI/CD pipeline. The pipeline 
 - GitHub Actions for CI/CD automation.
 - Semgrep for SAST.
 - Gitleaks for secret scanning.
-- Trivy for container and dependency scanning.
+- Trivy for filesystem dependency scanning.
 - Checkov for IaC scanning.
 
 ## Interview Value
@@ -68,4 +69,3 @@ This project is designed to show more than tool usage. It demonstrates the abili
 - OWASP ASVS and SAMM mapping.
 - OPA or Conftest policy gates.
 - Example pull request workflow with failing and passing security gates.
-

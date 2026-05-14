@@ -2,7 +2,7 @@
 
 This document tracks the security scanning approach used by the project.
 
-The first scanners added to the MVP are Semgrep, Checkov, Gitleaks, and Trivy. The goal is to start with a small number of understandable signals before adding more tools.
+The MVP scanner set is Semgrep, Checkov, Gitleaks, and Trivy. The goal is to keep the toolchain small enough to understand while still covering application code, infrastructure-as-code, secrets, and dependencies.
 
 ## Semgrep
 
@@ -64,7 +64,7 @@ The workflow runs on:
 - Pull requests targeting `main`.
 - Manual runs from the GitHub Actions tab.
 
-Semgrep and Checkov run in container images in CI, so local Windows installation is not required for GitHub Actions scanning.
+The scanners run in container images in CI, so local Windows installation is not required for GitHub Actions scanning.
 
 Current behavior:
 
@@ -99,7 +99,7 @@ The relevant risk is not just "SQL injection exists." The more useful interpreta
 - The query is built with string interpolation.
 - The endpoint uses only a weak demo API key in the MVP.
 
-This is the type of context the future analyzer should use when assigning priority.
+This is the type of context the analyzer uses when assigning priority and building correlated risk scenarios.
 
 Checkov is expected to flag one or more intentionally risky Terraform patterns in:
 
