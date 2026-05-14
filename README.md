@@ -70,3 +70,4 @@ Useful documentation:
 - [Security scanning](docs/security-scanning.md)
 - [Finding normalization](docs/finding-normalization.md)
 - [Risk scoring](docs/risk-scoring.md)
+- [Reporting](docs/reporting.md)

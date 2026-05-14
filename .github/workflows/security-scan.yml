@@ -34,10 +34,26 @@ jobs:
             --output scanner-results/semgrep.json \
             app
 
-      - name: Upload Semgrep JSON results
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Normalize Semgrep findings
+        run: python -m analyzer.normalize_semgrep
+
+      - name: Score normalized findings
+        run: python -m analyzer.score_findings
+
+      - name: Generate Markdown risk report
+        run: python -m analyzer.generate_report
+
+      - name: Upload security scan artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: semgrep-results
-          path: scanner-results/semgrep.json
+          name: security-scan-artifacts
+          path: |
+            scanner-results/*.json
+            reports/*.md
           if-no-files-found: error

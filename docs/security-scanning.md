@@ -37,7 +37,10 @@ Current behavior:
 - Uses the local rules from `semgrep-rules/`.
 - Scans the `app/` directory.
 - Writes JSON output to `scanner-results/semgrep.json`.
-- Uploads the JSON file as a workflow artifact named `semgrep-results`.
+- Normalizes findings.
+- Calculates risk scores.
+- Generates a Markdown risk report.
+- Uploads generated JSON files and the Markdown report as a workflow artifact named `security-scan-artifacts`.
 
 The workflow is currently treated as a monitoring scan. The sample API intentionally contains a finding, so the first CI version focuses on producing machine-readable output instead of blocking every commit.
 
