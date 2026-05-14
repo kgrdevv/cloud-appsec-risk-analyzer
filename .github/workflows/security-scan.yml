@@ -95,6 +95,9 @@ jobs:
       - name: Score normalized findings
         run: python -m analyzer.score_findings
 
+      - name: Correlate scored findings
+        run: python -m analyzer.correlate_findings
+
       - name: Generate Markdown risk report
         run: python -m analyzer.generate_report
 

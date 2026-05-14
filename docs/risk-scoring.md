@@ -77,4 +77,4 @@ The current Semgrep SQL injection finding scores as `90/high`. It is intentional
 
 ## Current Limitation
 
-The scoring model does not yet correlate findings across scanners. It scores each finding independently. Cross-tool correlation is planned after additional scanner outputs are added.
+The scoring model scores each finding independently. Cross-tool context is handled by the separate correlation step.

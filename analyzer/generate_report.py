@@ -50,6 +50,20 @@ def load_scanner_execution(scanner_results_dir: Path) -> dict[str, int]:
     return execution
 
 
+def load_correlated_risks(input_path: Path) -> list[dict[str, Any]]:
+    if not input_path.exists():
+        return []
+
+    with input_path.open(encoding="utf-8") as input_file:
+        payload = json.load(input_file)
+
+    scenarios = payload.get("correlated_risks", [])
+    if not isinstance(scenarios, list):
+        raise ValueError("Correlated risks JSON does not contain a valid correlated_risks list")
+
+    return [scenario for scenario in scenarios if isinstance(scenario, dict)]
+
+
 def priority_sort_key(finding: dict[str, Any]) -> tuple[int, int]:
     priority = str(finding.get("priority", "unknown")).lower()
     score = finding.get("risk_score", 0)
@@ -160,6 +174,51 @@ def build_finding_details(findings: list[dict[str, Any]]) -> list[str]:
     return lines
 
 
+def build_correlated_risk_scenarios(scenarios: list[dict[str, Any]]) -> list[str]:
+    lines = ["## Correlated Risk Scenarios", ""]
+
+    if not scenarios:
+        lines.extend(["No correlated risk scenarios were identified.", ""])
+        return lines
+
+    for index, scenario in enumerate(scenarios, start=1):
+        lines.extend(
+            [
+                f"### {index}. {markdown_escape(scenario.get('title', 'Risk scenario'))}",
+                "",
+                f"- Severity: `{markdown_escape(scenario.get('severity', 'unknown'))}`",
+                f"- Scenario ID: `{markdown_escape(scenario.get('scenario_id', 'unknown'))}`",
+                f"- Max related finding score: `{markdown_escape(scenario.get('max_finding_score', 0))}`",
+                f"- Correlation factors: {format_list(scenario.get('correlation_factors'))}",
+                f"- Summary: {markdown_escape(scenario.get('summary', ''))}",
+                "",
+                "Related findings:",
+                "",
+            ]
+        )
+
+        related_findings = scenario.get("related_findings", [])
+        if isinstance(related_findings, list) and related_findings:
+            for finding in related_findings:
+                if not isinstance(finding, dict):
+                    continue
+                location = format_location(finding)
+                lines.append(
+                    "- `{scanner}` `{rule}` at `{location}` with score `{score}`".format(
+                        scanner=markdown_escape(finding.get("scanner", "unknown")),
+                        rule=markdown_escape(finding.get("rule_id", "unknown")),
+                        location=markdown_escape(location),
+                        score=markdown_escape(finding.get("risk_score", 0)),
+                    )
+                )
+        else:
+            lines.append("- No related findings were provided.")
+
+        lines.append("")
+
+    return lines
+
+
 def build_recommendations(findings: list[dict[str, Any]]) -> list[str]:
     if not findings:
         return ["## Recommended Actions", "", "No remediation actions are required.", ""]
@@ -191,7 +250,11 @@ def build_recommendations(findings: list[dict[str, Any]]) -> list[str]:
     return lines
 
 
-def build_report(findings: list[dict[str, Any]], scanner_execution: dict[str, int]) -> str:
+def build_report(
+    findings: list[dict[str, Any]],
+    scanner_execution: dict[str, int],
+    correlated_risks: list[dict[str, Any]],
+) -> str:
     sorted_findings = sorted(findings, key=priority_sort_key)
     generated_at = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
 
@@ -206,6 +269,7 @@ def build_report(findings: list[dict[str, Any]], scanner_execution: dict[str, in
 
     lines.extend(build_summary(sorted_findings, scanner_execution))
     lines.extend(build_findings_table(sorted_findings))
+    lines.extend(build_correlated_risk_scenarios(correlated_risks))
     lines.extend(build_finding_details(sorted_findings))
     lines.extend(build_recommendations(sorted_findings))
 
@@ -234,6 +298,11 @@ def parse_args() -> argparse.Namespace:
         default="scanner-results",
         help="Directory containing normalized scanner finding files.",
     )
+    parser.add_argument(
+        "--correlated-risks",
+        default="scanner-results/correlated-risks.json",
+        help="Path to correlated risk scenarios JSON.",
+    )
     return parser.parse_args()
 
 
@@ -241,7 +310,8 @@ def main() -> None:
     args = parse_args()
     findings = load_findings(Path(args.input))
     scanner_execution = load_scanner_execution(Path(args.scanner_results_dir))
-    report = build_report(findings, scanner_execution)
+    correlated_risks = load_correlated_risks(Path(args.correlated_risks))
+    report = build_report(findings, scanner_execution, correlated_risks)
     write_report(Path(args.output), report)
     print(f"Generated report with {len(findings)} finding(s) at {args.output}")
 

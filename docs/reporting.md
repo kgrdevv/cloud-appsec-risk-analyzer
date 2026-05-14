@@ -34,6 +34,7 @@ The first report version includes:
 - finding counts by priority;
 - scanner execution summary, including scanners with zero findings;
 - findings overview table;
+- correlated risk scenarios;
 - detailed finding breakdown;
 - recommended actions.
 
