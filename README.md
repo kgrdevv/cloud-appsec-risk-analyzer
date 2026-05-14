@@ -72,3 +72,4 @@ Useful documentation:
 - [Risk scoring](docs/risk-scoring.md)
 - [Reporting](docs/reporting.md)
 - [IaC exposure model](docs/iac-exposure-model.md)
+- [Secret scanning](docs/secret-scanning.md)

@@ -148,6 +148,10 @@ def build_recommendations(findings: list[dict[str, Any]]) -> list[str]:
         actions.append("Restrict public network exposure in Terraform unless a public route is explicitly required.")
         actions.append("Replace wildcard IAM permissions with least-privilege actions and resources.")
 
+    if "secret" in categories:
+        actions.append("Confirm whether detected secret material is a controlled fixture or a real credential.")
+        actions.append("Remove real credentials from version control and rotate any exposed secret values.")
+
     actions.append("Feed additional scanner outputs into the analyzer to improve prioritization confidence.")
 
     lines = ["## Recommended Actions", ""]

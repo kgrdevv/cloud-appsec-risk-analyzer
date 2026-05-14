@@ -70,6 +70,13 @@ def exposure_bonus(finding: dict[str, Any]) -> tuple[int, list[str]]:
             bonus += 10
             factors.append("broad_permissions")
 
+    if category == "secret":
+        bonus += 15
+        factors.append("credential_material")
+        if file_path.startswith("test-fixtures/"):
+            bonus -= 25
+            factors.append("controlled_test_fixture")
+
     return bonus, factors
 
 

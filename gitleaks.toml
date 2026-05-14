@@ -1,0 +1,11 @@
+title = "Cloud AppSec Risk Analyzer Gitleaks Configuration"
+
+[[rules]]
+id = "demo-secret-access-token"
+description = "Demo secret access token used by the portfolio fixture"
+regex = '''DEMO_SECRET_ACCESS_TOKEN\s*=\s*demo_secret_[A-Za-z0-9_]{16,}'''
+secretGroup = 0
+keywords = [
+  "DEMO_SECRET_ACCESS_TOKEN",
+]
+

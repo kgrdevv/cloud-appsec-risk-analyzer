@@ -53,6 +53,8 @@ The first scoring version adds small bonuses for:
 - SQL injection CWE mapping.
 - public exposure language in IaC findings;
 - broad permissions language in IaC findings.
+- credential material in secret scanning findings;
+- controlled test fixture context lowers the score for intentional demo secrets.
 
 These are deliberately conservative. Future versions should use richer context, such as whether a vulnerable route is public, admin-only, internet-exposed, connected to sensitive data, or tied to risky cloud/IaC configuration.
 

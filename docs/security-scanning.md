@@ -2,7 +2,7 @@
 
 This document tracks the security scanning approach used by the project.
 
-The first scanners added to the MVP are Semgrep and Checkov. The goal is to start with a small number of understandable signals before adding more tools.
+The first scanners added to the MVP are Semgrep, Checkov, and Gitleaks. The goal is to start with a small number of understandable signals before adding more tools.
 
 ## Semgrep
 
@@ -26,6 +26,22 @@ infra/terraform/
 
 The Terraform sample intentionally includes risky cloud-style patterns, such as public ingress and broad IAM permissions. These are scan targets only and should not be deployed as written.
 
+## Gitleaks
+
+Gitleaks is used for secret scanning. In this project, it checks the repository for controlled secret-like test data.
+
+Current configuration:
+
+```text
+gitleaks.toml
+```
+
+Current fixture:
+
+```text
+test-fixtures/secrets/leaky-config.txt
+```
+
 ## GitHub Actions
 
 The repository includes a GitHub Actions workflow:
@@ -47,8 +63,10 @@ Current behavior:
 - Uses the local rules from `semgrep-rules/`.
 - Scans the `app/` directory.
 - Runs Checkov against `infra/terraform/`.
+- Runs Gitleaks against the repository contents.
 - Writes JSON output to `scanner-results/semgrep.json`.
 - Writes JSON output to `scanner-results/checkov.json`.
+- Writes JSON output to `scanner-results/gitleaks.json`.
 - Normalizes findings.
 - Calculates risk scores.
 - Generates a Markdown risk report.
@@ -80,6 +98,12 @@ infra/terraform/
 ```
 
 Those findings provide cloud exposure context for later correlation.
+
+Gitleaks is expected to flag the controlled demo secret fixture in:
+
+```text
+test-fixtures/secrets/leaky-config.txt
+```
 
 ## Run Locally
 

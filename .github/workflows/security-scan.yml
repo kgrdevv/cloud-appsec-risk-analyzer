@@ -45,6 +45,18 @@ jobs:
             --soft-fail \
             > scanner-results/checkov.json
 
+      - name: Run Gitleaks against repository contents
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" \
+            ghcr.io/gitleaks/gitleaks:latest \
+            dir /src \
+            --config /src/gitleaks.toml \
+            --report-format json \
+            --report-path /src/scanner-results/gitleaks.json \
+            --redact \
+            --exit-code 0
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -56,10 +68,13 @@ jobs:
       - name: Normalize Checkov findings
         run: python -m analyzer.normalize_checkov --output scanner-results/checkov-normalized-findings.json
 
+      - name: Normalize Gitleaks findings
+        run: python -m analyzer.normalize_gitleaks --output scanner-results/gitleaks-normalized-findings.json
+
       - name: Merge normalized findings
         run: |
           python -m analyzer.merge_findings \
-            --input scanner-results/semgrep-normalized-findings.json scanner-results/checkov-normalized-findings.json \
+            --input scanner-results/semgrep-normalized-findings.json scanner-results/checkov-normalized-findings.json scanner-results/gitleaks-normalized-findings.json \
             --output scanner-results/normalized-findings.json
 
       - name: Score normalized findings
