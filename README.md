@@ -1,5 +1,7 @@
 # Cloud AppSec Risk Analyzer
 
+[![Security Scan](https://github.com/kgrdevv/cloud-appsec-risk-analyzer/actions/workflows/security-scan.yml/badge.svg)](https://github.com/kgrdevv/cloud-appsec-risk-analyzer/actions/workflows/security-scan.yml)
+
 Cloud AppSec Risk Analyzer is a DevSecOps portfolio project that demonstrates how application security findings, cloud exposure signals, and CI/CD security automation can be combined into a prioritized risk report.
 
 The project is built around a small vulnerable FastAPI application, intentionally risky Terraform configuration, multiple security scanners, and a Python analyzer that normalizes, scores, correlates, and reports findings.
@@ -29,7 +31,7 @@ Security scanners
 | --- | --- | --- |
 | SAST | Semgrep | Detects insecure application code patterns. |
 | IaC scanning | Checkov | Detects risky Terraform/cloud configuration. |
-| Secret scanning | Gitleaks | Detects committed secret-like material. |
+| Secret scanning | Gitleaks | Detects secret-like material in repository contents. |
 | Dependency scanning | Trivy | Scans dependency manifests for known vulnerabilities. |
 
 ## Architecture
